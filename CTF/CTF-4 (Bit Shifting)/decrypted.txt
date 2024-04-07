@@ -1,0 +1,7 @@
+After some shifting according to ASCII code (char + 1)
+//////////////////////////////////////////////////////////
+
+Hello and welcome in file00 forensic challenge. This is just filler text to make it longer.
+
+fastctf{a-bit-tricky}
+ 
