@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -6,83 +7,87 @@ import java.net.Socket;
 
 public class server {
     public static final int PORT_NUMBER = 6666;
-    public static PrintWriter out[];
-    public static BufferedReader in[];
-    public static Socket sockets[];
+    public static Socket sockets[] = new Socket[2];
     private static ServerSocket socket;
-    private static Chat clients[];
-    private static final int MAX_CLIENTS = 3;
+    private static Chat clients[] = new Chat[2];
+    static private PrintWriter out[] = new PrintWriter[2];
+    private static String names[] = { "Alice", "Bob" };
+
     public static void main(String[] args) throws Exception {
         socket = new ServerSocket(PORT_NUMBER);
-        clients = new Chat[MAX_CLIENTS];
-        sockets = new Socket[MAX_CLIENTS];
-        in = new BufferedReader[MAX_CLIENTS];
-        out = new PrintWriter[MAX_CLIENTS];
+
         System.out.println("Server is running on port " + PORT_NUMBER);
         // Wait for All clients to connect
-        for (int i = 0; i < MAX_CLIENTS; i++) {
+        for (int i = 0; i < 2; i++) {
             sockets[i] = socket.accept();
             System.out.println("Client " + (i + 1) + " connected");
-            out[i] = new PrintWriter(sockets[i].getOutputStream(), true);
-            in[i] = new BufferedReader(new InputStreamReader(sockets[i].getInputStream()));
-            clients[i] = new Chat(i);
         }
-        //Start chatting
-        for (int i = 0; i < MAX_CLIENTS; i++) {
-            clients[i].start();
-        }
+        // Create a chat object for each client
+        clients[0] = new Chat(0);
+        clients[1] = new Chat(1);
+        // Start chatting
+        clients[0].start();
+        clients[1].start();
+        // Wait for all clients to disconnect
+        clients[0].join();
+        clients[1].join();
+
         socket.close();
     }
 
     private static class Chat extends Thread {
         private int id;
+        
+        private BufferedReader in;
 
-        Chat(int ID) {
+        Chat(int ID) throws IOException {
             this.id = ID;
-            out[id].println("Connected Succesfully : You are client " + (id + 1));
+            in = new BufferedReader(new InputStreamReader(sockets[id].getInputStream()));
+            out[id] = new PrintWriter(sockets[id].getOutputStream(), true);
+            out[id].println("Connected Succesfully : You are " + names[id]);
+            out[id].println(ID);
         }
 
         @Override
         public void run() {
-            String message;
-            while (true) {
-                try {
-                    message = in[id].readLine();
+            try {
+                String message = null;
+                while (true) {
+                    message = in.readLine();
                     if (message.equals(String.valueOf("exit"))) {
+                        out[id].println("exit");
+                        out[1 - id].println("exit");
                         out[id].close();
-                        in[id].close();
-                        for (int i = 0; i < MAX_CLIENTS; i++) {
-                            if (i != id) {
-                                clients[i].interrupt();
-                            }
-                        }
+                        
+                        in.close();
+                        clients[1 - id].interrupt();
                         sockets[id].close();
                         break;
                     } else {
-                        for (int i = 0; i < MAX_CLIENTS; i++) {
-                            if (i != id) {
-                                out[i].println("Client " + (id + 1) + " : " + message);
-                            }
-                        }
+                        // System.out.println("Client " + (id + 1) + " : " + message);
+                        // otherOut.println("Client " + (id + 1) + " : " + message);
+                        out[1-id].println(names[id] + " : " + message);
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            } catch (Exception e) {
+                
+            }
+        }
+
+        @Override
+        public void interrupt() {
+            super.interrupt();
+            try {
+                out[id].println("exit");
+                out[id].close();
+                in.close();
+                sockets[id].close();
+            } catch (IOException e) {
+                
             }
 
         }
-        @Override
-        public void interrupt() {
-            out[id].close();
-            
-            try {
-                in[id].close();
-                sockets[id].close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            super.interrupt();
-        }
+
     }
 }
