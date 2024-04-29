@@ -101,6 +101,9 @@ public class client {
             }
             out.println(1);
             privateKey = (int) Math.floor(Math.random() * qDH + 1);
+            while (privateKey == otherPublicKey) {
+                privateKey = (int) Math.floor(Math.random() * qDH + 1);
+            }
             publicKey = modularExponent(alphaDH, privateKey, qDH);
             // TODO : Add El Gamal signature
             out.println(publicKey);
