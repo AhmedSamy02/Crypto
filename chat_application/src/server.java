@@ -83,15 +83,14 @@ public class server {
                         out[id].println("exit");
                         out[1 - id].println("exit");
                         out[id].close();
-
                         in[id].close();
                         clients[1 - id].interrupt();
                         sockets[id].close();
                         break;
                     } else {
-                        // System.out.println("Client " + (id + 1) + " : " + message);
+                        System.out.println(names[id]+ " : " + message);
                         // otherOut.println("Client " + (id + 1) + " : " + message);
-                        out[1 - id].println(names[id] + " : " + message);
+                        out[1 - id].println(message);
                     }
 
                 }

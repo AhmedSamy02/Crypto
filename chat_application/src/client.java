@@ -19,15 +19,25 @@ public class client {
     private static int publicKey = 0;
     private static int otherPublicKey = 0;
     private static int secretSharedKey = 0;
+    private static String secretKey = "";
+    private static String names[] = { "Alice", "Bob" };
 
     private static int modularExponent(int x, int y, int p) {
-        int res = x%p;
-        while (y>1) {
+        int res = x % p;
+        while (y > 1) {
             res *= x;
             res %= p;
             y--;
         }
         return res;
+    }
+
+    public static final byte[] intToByteArray(int value) {
+        return new byte[] {
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) value };
     }
 
     public static void main(String[] args) throws Exception {
@@ -96,6 +106,7 @@ public class client {
             out.println(publicKey);
         }
         secretSharedKey = modularExponent(otherPublicKey, privateKey, qDH);
+        secretKey = String.valueOf(secretSharedKey);
         System.out.println("----------------Status----------------");
         System.out.println("Connection Done Successfully");
         System.out.println("----------------Parameters----------------");
@@ -117,10 +128,10 @@ public class client {
             public void interrupt() {
                 super.interrupt();
                 try {
-                    System.out.println("Disconnected from server Press enter to exit");
-                    in.close();
+                    System.out.println(names[1 - id] + " disconnected from server");
+                    System.out.println("Goodbye!");
                     System.exit(0);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -151,12 +162,16 @@ public class client {
                     // System.out.print(names[id] + " : ");
                     message = in.readLine();
                 }
-                // Send message to server
-                out.println(message);
                 if (message.equals(String.valueOf("exit"))) {
+                    out.println(message);
                     flag = true;
+                    System.out.println("The session has ended");
+                    System.out.println("Goodbye!");
                     break;
                 }
+                // Send message to server after encrypting it
+                out.println(AES.encrypt(message, secretKey));
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -168,7 +183,6 @@ public class client {
         try {
             String message;
             while (socket.isConnected()) {
-
                 message = socketReader.readLine();
                 if (message == null) {
                     break;
@@ -179,7 +193,8 @@ public class client {
                     }
                     break;
                 }
-                System.out.println(message);
+                message = AES.decrypt(message.substring(message.lastIndexOf(' ') + 1), secretKey);
+                System.out.println(names[id] + " : " + message);
             }
         } catch (IOException e) {
             e.printStackTrace();
