@@ -48,6 +48,7 @@ public class server {
         // Wait for all clients to disconnect
         clients[0].join();
         clients[1].join();
+        
     }
 
     private static boolean swappingPublicKeys() throws IOException {
@@ -92,13 +93,11 @@ public class server {
                         // otherOut.println("Client " + (id + 1) + " : " + message);
                         out[1 - id].println(message);
                     }
-
                 }
             } catch (Exception e) {
-
+                System.out.println("Session ended");
             }
         }
-
         @Override
         public void interrupt() {
             super.interrupt();

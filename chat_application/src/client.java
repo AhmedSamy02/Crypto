@@ -115,7 +115,7 @@ public class client {
         System.out.println("Other Public Key : " + otherPublicKey);
         System.out.println("Secret Shared Key : " + secretSharedKey);
         System.out.println();
-        System.out.println("You can start chatting now");
+        System.out.println("You are chatting now with " + names[1 - id]);
         System.out.println("----------------Chat----------------");
 
         userRead = new Thread() {
@@ -194,7 +194,7 @@ public class client {
                     break;
                 }
                 message = AES.decrypt(message.substring(message.lastIndexOf(' ') + 1), secretKey);
-                System.out.println(names[id] + " : " + message);
+                System.out.println(names[1-id] + " : " + message);
             }
         } catch (IOException e) {
             e.printStackTrace();
