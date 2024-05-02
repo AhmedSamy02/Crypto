@@ -4,6 +4,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.math.BigInteger;
+
 
 public class server {
     public static final int PORT_NUMBER = 6666;
@@ -52,16 +54,34 @@ public class server {
     }
 
     private static boolean swappingPublicKeys() throws IOException {
+
         int yA = Integer.parseInt(in[0].readLine());
         out[1].println(yA);
-        int ack = Integer.parseInt(in[1].readLine());
+        BigInteger ra = new BigInteger(in[0].readLine());
+        out[1].println(ra);
+        BigInteger sa = new BigInteger(in[0].readLine());
+        out[1].println(sa); 
+        BigInteger ya = new BigInteger(in[0].readLine());
+        out[1].println(ya); 
+        System.out.println("1");
+        int  ack = Integer.parseInt(in[1].readLine());
         if (ack == 0) {
-            sockets[1].close();
+            sockets[0].close();
             return false;
         }
+
+
         int yB = Integer.parseInt(in[1].readLine());
+                System.out.println(yB);
+
         out[0].println(yB);
-        ack = Integer.parseInt(in[0].readLine());
+        BigInteger rb = new BigInteger(in[1].readLine());
+        out[0].println(rb);
+         BigInteger sb = new BigInteger(in[1].readLine());
+        out[0].println(sb);
+            BigInteger yb = new BigInteger(in[1].readLine());
+        out[0].println(yb);
+         ack = Integer.parseInt(in[0].readLine());
         if (ack == 0) {
             sockets[0].close();
             return false;

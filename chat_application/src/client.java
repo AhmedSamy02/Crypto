@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.math.BigInteger;
+
 
 public class client {
     public static final int PORT_NUMBER = 6666;
@@ -39,7 +41,7 @@ public class client {
         int qGamal = 0;
         int alphaGamal = 0;
         // Read the file name from the user
-        try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("D:\\2nd_term\\security\\project\\Crypto\\chat_application\\data.txt"))) {
             String line;
             line = br.readLine();
             qDH = Integer.parseInt(line.split(" ")[0]);
@@ -68,10 +70,26 @@ public class client {
             privateKey = (int) Math.floor(Math.random() * qDH + 1);
             publicKey = modularExponent(alphaDH, privateKey, qDH);
             // TODO : Add El Gamal signature
+            ElGamal user1=new ElGamal(BigInteger.valueOf(qGamal),BigInteger.valueOf(alphaGamal));
+            Pair<BigInteger,BigInteger> rs=user1.sign(BigInteger.valueOf(publicKey));
             out.println(publicKey);
+            System.out.println("public key");
+            out.println(rs.getFirst());
+                        System.out.println("r key");
+
+            out.println(rs.getSecond());
+                        System.out.println("s key");
+            out.println(user1.y);
+                        System.out.println("y key");
+
             otherPublicKey = Integer.parseInt(socketReader.readLine());
-            // TODO : Check El Gamal Signature
-            boolean isValid = true;
+                        // TODO : Check El Gamal Signature
+
+BigInteger r = new BigInteger(socketReader.readLine());
+BigInteger s = new BigInteger(socketReader.readLine());
+BigInteger yb = new BigInteger(socketReader.readLine());
+
+            boolean isValid = ElGamal.verify(r, s, BigInteger.valueOf(otherPublicKey),BigInteger.valueOf(qGamal),BigInteger.valueOf(alphaGamal),yb);
             if (!isValid) {
                 out.println(0);
                 socket.close();
@@ -81,9 +99,19 @@ public class client {
             }
             out.println(1);
         } else {
+                        System.out.println("public key res");
+
             otherPublicKey = Integer.parseInt(socketReader.readLine());
+                                    System.out.println("r key res");
+
+    BigInteger r = new BigInteger(socketReader.readLine());
+                        System.out.println("s key res");
+
+BigInteger s = new BigInteger(socketReader.readLine());
+BigInteger y = new BigInteger(socketReader.readLine());
+ ElGamal user2=new ElGamal(BigInteger.valueOf(qGamal),BigInteger.valueOf(alphaGamal));
             // TODO : Check El Gamal Signature
-            boolean isValid = true;
+            boolean isValid = ElGamal.verify(r, s, BigInteger.valueOf(otherPublicKey),BigInteger.valueOf(qGamal),BigInteger.valueOf(alphaGamal),y);
             if (!isValid) {
                 out.println(0);
                 socket.close();
@@ -98,7 +126,12 @@ public class client {
             }
             publicKey = modularExponent(alphaDH, privateKey, qDH);
             // TODO : Add El Gamal signature
+                           Pair<BigInteger,BigInteger> rs=user2.sign(BigInteger.valueOf(publicKey)); 
+
             out.println(publicKey);
+            out.println(rs.getFirst());
+            out.println(rs.getSecond());
+            out.println(user2.y);
         }
         secretSharedKey = modularExponent(otherPublicKey, privateKey, qDH);
         secretKey = String.valueOf(secretSharedKey);
