@@ -41,7 +41,7 @@ public class client {
         int qGamal = 0;
         int alphaGamal = 0;
         // Read the file name from the user
-        try (BufferedReader br = new BufferedReader(new FileReader("D:\\2nd_term\\security\\project\\Crypto\\chat_application\\data.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\20112\\Desktop\\Faculty\\Projects\\Crypto\\chat_application\\data.txt"))) {
             String line;
             line = br.readLine();
             qDH = Integer.parseInt(line.split(" ")[0]);

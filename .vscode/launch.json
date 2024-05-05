@@ -2,6 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "client",
+      "request": "launch",
+      "mainClass": "client",
+      "projectName": "Crypto_a035917e"
+    },
+    {
+      "type": "java",
+      "name": "server",
+      "request": "launch",
+      "mainClass": "server",
+      "projectName": "Crypto_a035917e"
+    },
+    {
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",

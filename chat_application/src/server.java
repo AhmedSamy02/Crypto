@@ -63,7 +63,6 @@ public class server {
         out[1].println(sa); 
         BigInteger ya = new BigInteger(in[0].readLine());
         out[1].println(ya); 
-        System.out.println("1");
         int  ack = Integer.parseInt(in[1].readLine());
         if (ack == 0) {
             sockets[0].close();
@@ -72,7 +71,6 @@ public class server {
 
 
         int yB = Integer.parseInt(in[1].readLine());
-                System.out.println(yB);
 
         out[0].println(yB);
         BigInteger rb = new BigInteger(in[1].readLine());
